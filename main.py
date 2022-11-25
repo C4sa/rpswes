@@ -1,3 +1,5 @@
+from rps import *
+
 logo = '''
   ___ ___  _____      _____ ___ 
  | _ \\ _ \\/ __\\ \\    / / __/ __|
@@ -7,4 +9,20 @@ logo = '''
 
 print(logo)
 
-input()
+while True:
+    cmd = input('>>> ')
+
+    if cmd == 'c':
+        clear()
+
+    elif cmd == '' or cmd == ' ':
+        continue
+
+    elif cmd == 'start' or cmd == 'x':
+        run_round()
+
+    elif cmd == 'q' or cmd == 'quit' or cmd == 'exit':
+        quit()
+
+    else:
+        err(f'No command named {cmd}.')
