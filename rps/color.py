@@ -19,7 +19,8 @@ def magenta(str):
 def cyan(str):
     return col(str, 36)
 
+def white(str):
+    return str
+
 def col(msg, color):
-    #return '\033[1;' + str(color) + 'm' + msg + '\033[0m'
-    print ("@@@ str: " + str(color) + ", msg: " + str(msg))
     return '\033[1;' + str(color) + 'm' + msg + '\033[0m'
