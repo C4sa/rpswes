@@ -1,5 +1,6 @@
 from rps import *
 import os
+import pickle
 
 logo = '''
   ___ ___  _____      _____ ___ 
@@ -11,6 +12,7 @@ logo = '''
 print(logo)
 
 homepath = os.path.expanduser('~')
+savepath = homepath + '\\.novc\\rpswes\\player.dat'
 
 mode = 'normal'
 
@@ -26,14 +28,34 @@ rating_computer = 100
 highest_rating_user = rating_user
 highest_rating_computer = rating_computer
 
+def save_progress():
+    with open(savepath, 'wb') as handle:
+        pickle.dump([games_played, games_won, games_lost, games_tied, rating_user, rating_computer, highest_rating_user, highest_rating_computer], handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+# savefile
+if not os.path.exists(savepath):
+    f = open(homepath + '\\.novc\\rpswes\\player.dat', 'x')
+    save_progress()
+    f.close()
+
+# saving/loading progress into file
+def load_progress():
+    global games_played, games_won, games_lost, games_tied, rating_user, rating_computer, highest_rating_user, highest_rating_computer
+
+    if os.stat(savepath).st_size == 0:
+        print('@@@ SAVEFILE IS EMPTY, SKIPPING')
+    else:
+        with open(savepath, 'rb') as handle:
+            games_played, games_won, games_lost, games_tied, rating_user, rating_computer, highest_rating_user, highest_rating_computer = pickle.load(handle)
+            print('@@@ LOADED STATS')
+
 # first-time check
 if os.path.exists(homepath + '\\.novc\\rpswes'):
-    # load stuff here
-    pass
+    load_progress()
 else:
     # The game is likely being opened for the first time.
     # The environment gets prepared for additions in later versions.
-    print('Use x or start to star a game, stats to view your stats,\nc to clear and q to quit! Use mode to toggle between the two modes.\n')
+    print('Use x or start to start a game, stats to view your stats,\nc to clear and q to quit! Use mode to toggle between the two modes.\n')
     if os.path.exists(homepath + '\\.novc'):
         if os.path.exists(homepath + '\\.novc\\rpswes'):
             pass
@@ -45,6 +67,8 @@ else:
 
 # main loop
 while True:
+    #stats = [games_played, games_won, games_lost, games_tied, rating_user, rating_computer, highest_rating_user, highest_rating_computer]
+    save_progress()
     cmd = input('>>> ')
 
     if cmd == 'c':
@@ -81,6 +105,8 @@ while True:
 
             if rating_user < 100: rating_user = 100
             if rating_computer < 100: rating_computer = 100
+
+            save_progress()
         if mode == 'impossible': run_round_impossible()
 
     elif cmd == 'mode':
@@ -96,6 +122,7 @@ while True:
         get_stats(rating_user, rating_computer, highest_rating_user, highest_rating_computer, games_won, games_lost, games_tied, games_played)
 
     elif cmd == 'q' or cmd == 'quit' or cmd == 'exit':
+        save_progress()
         quit()
 
     else:
